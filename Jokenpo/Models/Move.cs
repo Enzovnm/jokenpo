@@ -1,19 +1,25 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Jokenpo.Models
 {
+    [Table("Movements")]
     public class Move
     {
 
         public Move()
         {
-            Movements = new Collection<Move>();
+            Winners = new Collection<Move>();
         }
 
         public int Id {get; set;}
 
+        [Required]
         public string Name {get; set;}
 
-        public ICollection<Move> Movements{get; set;}
+
+        [Required]
+        public ICollection<Move> Winners{get; set;}
     }
 }

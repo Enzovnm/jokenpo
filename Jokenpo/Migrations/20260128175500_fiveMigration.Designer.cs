@@ -2,6 +2,7 @@
 using Jokenpo.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jokenpo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128175500_fiveMigration")]
+    partial class fiveMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,26 +37,6 @@ namespace Jokenpo.Migrations
                     b.ToTable("Matches");
                 });
 
-            modelBuilder.Entity("Jokenpo.Models.MatchMove", b =>
-                {
-                    b.Property<int>("MatchId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MoveId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MatchId", "PlayerId");
-
-                    b.HasIndex("MoveId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("MatchMoves");
-                });
-
             modelBuilder.Entity("Jokenpo.Models.Move", b =>
                 {
                     b.Property<int>("Id")
@@ -62,11 +45,16 @@ namespace Jokenpo.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("MoveId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MoveId");
 
                     b.ToTable("Movements");
                 });
@@ -88,71 +76,46 @@ namespace Jokenpo.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("MoveWinners", b =>
+            modelBuilder.Entity("MatchPlayer", b =>
                 {
-                    b.Property<int>("MoveId")
+                    b.Property<int>("MatchesId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("WinnerId")
+                    b.Property<int>("PlayersId")
                         .HasColumnType("integer");
 
-                    b.HasKey("MoveId", "WinnerId");
+                    b.HasKey("MatchesId", "PlayersId");
 
-                    b.HasIndex("WinnerId");
+                    b.HasIndex("PlayersId");
 
-                    b.ToTable("MoveWinners");
+                    b.ToTable("MatchPlayer");
                 });
 
-            modelBuilder.Entity("Jokenpo.Models.MatchMove", b =>
-                {
-                    b.HasOne("Jokenpo.Models.Match", "Match")
-                        .WithMany("MatchMoves")
-                        .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Jokenpo.Models.Move", "Move")
-                        .WithMany()
-                        .HasForeignKey("MoveId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Jokenpo.Models.Player", "Player")
-                        .WithMany("MatchMoves")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Match");
-
-                    b.Navigation("Move");
-
-                    b.Navigation("Player");
-                });
-
-            modelBuilder.Entity("MoveWinners", b =>
+            modelBuilder.Entity("Jokenpo.Models.Move", b =>
                 {
                     b.HasOne("Jokenpo.Models.Move", null)
+                        .WithMany("Winners")
+                        .HasForeignKey("MoveId");
+                });
+
+            modelBuilder.Entity("MatchPlayer", b =>
+                {
+                    b.HasOne("Jokenpo.Models.Match", null)
                         .WithMany()
-                        .HasForeignKey("MoveId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("MatchesId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jokenpo.Models.Move", null)
+                    b.HasOne("Jokenpo.Models.Player", null)
                         .WithMany()
-                        .HasForeignKey("WinnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("PlayersId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Jokenpo.Models.Match", b =>
+            modelBuilder.Entity("Jokenpo.Models.Move", b =>
                 {
-                    b.Navigation("MatchMoves");
-                });
-
-            modelBuilder.Entity("Jokenpo.Models.Player", b =>
-                {
-                    b.Navigation("MatchMoves");
+                    b.Navigation("Winners");
                 });
 #pragma warning restore 612, 618
         }

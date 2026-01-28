@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Jokenpo.Models
 {
@@ -7,12 +8,14 @@ namespace Jokenpo.Models
 
         public Player()
         {
-            Matches = new Collection<Match>();
+            MatchMoves = new Collection<MatchMove>();
         }
 
         public int Id {get; set;}
+
+        [Required]
         public string Name {get; set;}
 
-        public ICollection<Match> Matches {get; set;}
+        public ICollection<MatchMove> MatchMoves {get; set;}
     }
 }

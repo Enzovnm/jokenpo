@@ -7,12 +7,12 @@ namespace Jokenpo.Models
 
         public Match ()
         {
-            Players = new Collection<Player>();
+            MatchMoves = new Collection<MatchMove>();
         }
 
         public int Id {get; set;}
 
-        public ICollection<Player> Players {get; set;}
+        public ICollection<MatchMove> MatchMoves { get; set; }
 
 
     }

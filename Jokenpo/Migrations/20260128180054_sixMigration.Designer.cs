@@ -2,6 +2,7 @@
 using Jokenpo.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jokenpo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128180054_sixMigration")]
+    partial class sixMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,26 +35,6 @@ namespace Jokenpo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Matches");
-                });
-
-            modelBuilder.Entity("Jokenpo.Models.MatchMove", b =>
-                {
-                    b.Property<int>("MatchId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MoveId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MatchId", "PlayerId");
-
-                    b.HasIndex("MoveId");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("MatchMoves");
                 });
 
             modelBuilder.Entity("Jokenpo.Models.Move", b =>
@@ -88,6 +71,21 @@ namespace Jokenpo.Migrations
                     b.ToTable("Players");
                 });
 
+            modelBuilder.Entity("MatchPlayer", b =>
+                {
+                    b.Property<int>("MatchesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MatchesId", "PlayersId");
+
+                    b.HasIndex("PlayersId");
+
+                    b.ToTable("MatchPlayer");
+                });
+
             modelBuilder.Entity("MoveWinners", b =>
                 {
                     b.Property<int>("MoveId")
@@ -103,31 +101,19 @@ namespace Jokenpo.Migrations
                     b.ToTable("MoveWinners");
                 });
 
-            modelBuilder.Entity("Jokenpo.Models.MatchMove", b =>
+            modelBuilder.Entity("MatchPlayer", b =>
                 {
-                    b.HasOne("Jokenpo.Models.Match", "Match")
-                        .WithMany("MatchMoves")
-                        .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Jokenpo.Models.Move", "Move")
+                    b.HasOne("Jokenpo.Models.Match", null)
                         .WithMany()
-                        .HasForeignKey("MoveId")
+                        .HasForeignKey("MatchesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jokenpo.Models.Player", "Player")
-                        .WithMany("MatchMoves")
-                        .HasForeignKey("PlayerId")
+                    b.HasOne("Jokenpo.Models.Player", null)
+                        .WithMany()
+                        .HasForeignKey("PlayersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Match");
-
-                    b.Navigation("Move");
-
-                    b.Navigation("Player");
                 });
 
             modelBuilder.Entity("MoveWinners", b =>
@@ -143,16 +129,6 @@ namespace Jokenpo.Migrations
                         .HasForeignKey("WinnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Jokenpo.Models.Match", b =>
-                {
-                    b.Navigation("MatchMoves");
-                });
-
-            modelBuilder.Entity("Jokenpo.Models.Player", b =>
-                {
-                    b.Navigation("MatchMoves");
                 });
 #pragma warning restore 612, 618
         }
