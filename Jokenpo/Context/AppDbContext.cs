@@ -12,5 +12,7 @@ namespace Jokenpo.Context
 
         public DbSet<Player> Players {get; set;}
         
+        public DbSet<Match> Matches {get; set; }
+        public DbSet<Move> Movements {get; set; }
     }
 }
