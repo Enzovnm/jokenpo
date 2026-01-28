@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Jokenpo.Models
 {
     public class Player
     {
+
 
         public Player()
         {
@@ -16,6 +18,7 @@ namespace Jokenpo.Models
         [Required]
         public string Name {get; set;}
 
+        [JsonIgnore]
         public ICollection<MatchMove> MatchMoves {get; set;}
     }
 }

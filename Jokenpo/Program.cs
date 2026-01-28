@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Jokenpo.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
+builder.Services.AddControllers().AddJsonOptions(p => p.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 string postgresConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext> (options => options.UseNpgsql(postgresConnection));
@@ -20,7 +23,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "Swagger"));
+    app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger", "Swagger"));
 }
 
 app.UseHttpsRedirection();
