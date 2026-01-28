@@ -11,7 +11,5 @@ namespace Jokenpo.Models
         public int MoveId {get; set;}
         public Move Move {get; set;}
 
-
-
     }
 }

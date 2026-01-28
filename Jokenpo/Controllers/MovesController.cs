@@ -1,4 +1,5 @@
 using Jokenpo.Context;
+using Jokenpo.Dtos;
 using Jokenpo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,40 @@ namespace Jokenpo.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Get), new { id = move.Id }, move);
+        }
+
+        [HttpPost("{moveId:int}/winners")]
+        public async Task<ActionResult<Move>> AddWinners(int moveId, [FromBody] AddWinnerRequest AddwinnerDto)
+        {
+            var move = await _context.Movements
+                .Include(m => m.Winners)
+                .FirstOrDefaultAsync(m => m.Id == moveId);
+
+            if (move == null)
+                return NotFound("Move not found");
+
+            if (AddwinnerDto.WinnerIds.Contains(moveId))
+            {
+                return BadRequest("You cannot win your movement!");
+            }
+
+
+            var winners = await _context.Movements
+                .Where(m => AddwinnerDto.WinnerIds.Contains(m.Id))
+                .ToListAsync();
+
+            if (!winners.Any())
+                return BadRequest("No valid winners provided");
+
+            foreach (var winner in winners)
+            {
+                if (!move.Winners.Contains(winner))
+                    move.Winners.Add(winner);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
