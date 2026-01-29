@@ -5,6 +5,9 @@ This project is a simple Jokenpo built with .NET and PostgreSQL. It's a simple p
 
 <img width="1912" height="1330" alt="image" src="https://github.com/user-attachments/assets/3f3eacda-4826-41d1-b4a8-d541130b3ee2" />
 
+<img width="1912" height="955" alt="image" src="https://github.com/user-attachments/assets/10659ace-16a0-4691-a08f-492860da89b4" />
+
+
 
 
 ## 💻 Technology
