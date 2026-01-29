@@ -5,6 +5,7 @@ namespace Jokenpo.Models
     public class Match
     {
 
+
         public Match ()
         {
             MatchMoves = new Collection<MatchMove>();
