@@ -1,4 +1,3 @@
-import React from "react";
 import btgLogo from "../../assets/btg-logo.png";
 import { Link } from "react-router";
 

@@ -31,7 +31,14 @@ builder.Services.AddDbContext<AppDbContext> (options => options.UseNpgsql(postgr
 
 var app = builder.Build();
 
+
 app.UseCors("AllowFrontend");
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 
 // Configure the HTTP request pipeline.

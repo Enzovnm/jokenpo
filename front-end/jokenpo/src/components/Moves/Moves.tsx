@@ -12,13 +12,14 @@ interface Option {
 }
 
 export const Moves = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [name, setName] = useState("");
   const [winnerIds, setWinnerIds] = useState<number[]>([]);
   const [moves, setMoves] = useState<Move[]>([]);
 
   useEffect(() => {
     const fetchMoves = async () => {
-      const response = await fetch("http://localhost:5237/moves");
+      const response = await fetch(`${apiUrl}/moves`);
       const data = await response.json();
       setMoves(data);
     };
@@ -35,7 +36,7 @@ export const Moves = () => {
     e.preventDefault();
 
     try {
-      const createMoveResponse = await fetch("http://localhost:5237/moves", {
+      const createMoveResponse = await fetch(`${apiUrl}/moves`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export const Moves = () => {
 
       const createdMove: Move = await createMoveResponse.json();
 
-      await fetch(`http://localhost:5237/moves/${createdMove.id}/winners`, {
+      await fetch(`${apiUrl}/moves/${createdMove.id}/winners`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,0 +1,6 @@
+# Ignore all env files
+.env
+.env.*      # ignora .env.local, .env.production etc.
+
+# Except the example
+!.env.example

@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: jokenpo-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: jokenpo
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./api/Jokenpo
+    container_name: api-jokenpo
+    ports:
+      - "5000:5000"
+    environment:
+      ASPNETCORE_URLS: "http://+:5000"
+      ConnectionStrings__DefaultConnection: "Server=db;Port=5432;Database=jokenpo;User Id=postgres;Password=1234;"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./front-end/jokenpo
+    container_name: frontend-jokenpo
+    ports:
+      - "5173:80"
+    environment:
+      VITE_API_URL: "http://api:5000"
+    depends_on:
+      - api
+
+volumes:
+  db_data:

@@ -13,6 +13,8 @@ interface Player {
 }
 
 const JokenpoHero = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [Moves, setMoves] = useState<Move[]>([]);
 
   const [player, setPlayer] = useState<Player[]>([]);
@@ -46,7 +48,7 @@ const JokenpoHero = () => {
 
   const handleOnClick = async () => {
     try {
-      const response = await fetch("http://localhost:5237/jokenpo", {
+      const response = await fetch(`${apiUrl}/jokenpo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,8 +88,8 @@ const JokenpoHero = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5237/moves").then((r) => r.json()),
-      fetch("http://localhost:5237/players").then((r) => r.json()),
+      fetch(`${apiUrl}/moves`).then((r) => r.json()),
+      fetch(`${apiUrl}/players`).then((r) => r.json()),
     ])
       .then(([movesData, playersData]) => {
         setMoves(movesData);
