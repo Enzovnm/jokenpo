@@ -22,7 +22,7 @@ const JokenpoHero = () => {
   const [playerTwoMove, setPlayerTwoMove] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
-  // const [data, setData] = useState<string>("");
+  const [data, setData] = useState<string>("");
 
   const handlePlayer1Selected = (
     event: React.ChangeEvent<HTMLSelectElement>,
@@ -58,10 +58,9 @@ const JokenpoHero = () => {
           player2MovementId: playerTwoMove,
         }),
       });
-
       if (!response.ok) {
         const rawText = await response.text();
-        let message = "Erro inesperado";
+        let message = "Error, check the fields";
 
         try {
           const error = JSON.parse(rawText);
@@ -71,11 +70,15 @@ const JokenpoHero = () => {
         }
 
         setError(message);
-        throw new Error(message);
+        return;
       }
 
+      setError("");
+
       const data = await response.json();
-      
+
+      setData(data.message);
+      setOpen(true);
     } catch (err) {
       console.error("Erro ao criar match:", err);
     }
@@ -140,7 +143,7 @@ const JokenpoHero = () => {
           </div>
         </div>
         <button
-          className="cursor-pointer bg-green-500 w-40 py-5 rounded-2xl"
+          className="cursor-pointer bg-green-500 w-20 text-white font-bold lg:w-72 h-full self-center py-5 rounded-2xl"
           onClick={handleOnClick}
         >
           Play
@@ -186,8 +189,13 @@ const JokenpoHero = () => {
           </div>
         </div>
       </div>
+      {error && (
+        <div className="w-full">
+          <h2 className="text-xl w-full text-center text-red-500">{error}</h2>
+        </div>
+      )}
       <Modal isOpen={open} onClose={() => setOpen(false)}>
-        <h2 className="text-xl w-full text-center text-red-500">{error}</h2>
+        <h2 className="text-center font-bold">{data}</h2>
       </Modal>
     </main>
   );
