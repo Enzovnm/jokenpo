@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import playerLogo from "../../assets/player.png";
+import { Modal } from "./Modal";
 
 interface Move {
   id: number;
@@ -12,13 +13,16 @@ interface Player {
 }
 
 const JokenpoHero = () => {
-  const [movements, setMovements] = useState<Move[]>([]);
+  const [Moves, setMoves] = useState<Move[]>([]);
 
   const [player, setPlayer] = useState<Player[]>([]);
   const [player1Selected, setPlayer1Selected] = useState<string>("");
   const [player2Selected, setPlayer2Selected] = useState<string>("");
-  const [playerOneMovement, setPlayerOneMovement] = useState<string>("");
-  const [playerTwoMovement, setPlayerTwoMovement] = useState<string>("");
+  const [playerOneMove, setPlayerOneMove] = useState<string>("");
+  const [playerTwoMove, setPlayerTwoMove] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
+  // const [data, setData] = useState<string>("");
 
   const handlePlayer1Selected = (
     event: React.ChangeEvent<HTMLSelectElement>,
@@ -32,16 +36,12 @@ const JokenpoHero = () => {
     setPlayer2Selected(event.target.value);
   };
 
-  const handlePlayerOneMovement = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setPlayerOneMovement(event.target.value);
+  const handlePlayerOneMove = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPlayerOneMove(event.target.value);
   };
 
-  const handlePlayerTwoMovement = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setPlayerTwoMovement(event.target.value);
+  const handlePlayerTwoMove = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPlayerTwoMove(event.target.value);
   };
 
   const handleOnClick = async () => {
@@ -54,18 +54,28 @@ const JokenpoHero = () => {
         body: JSON.stringify({
           player1Id: player1Selected,
           player2Id: player2Selected,
-          player1MovementId: playerOneMovement,
-          player2MovementId: playerTwoMovement,
+          player1MovementId: playerOneMove,
+          player2MovementId: playerTwoMove,
         }),
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
+        const rawText = await response.text();
+        let message = "Erro inesperado";
+
+        try {
+          const error = JSON.parse(rawText);
+          message = error?.title ?? rawText;
+        } catch {
+          message = rawText;
+        }
+
+        setError(message);
+        throw new Error(message);
       }
 
       const data = await response.json();
-      console.log("Resultado:", data);
+      
     } catch (err) {
       console.error("Erro ao criar match:", err);
     }
@@ -77,7 +87,7 @@ const JokenpoHero = () => {
       fetch("http://localhost:5237/players").then((r) => r.json()),
     ])
       .then(([movesData, playersData]) => {
-        setMovements(movesData);
+        setMoves(movesData);
         setPlayer(playersData);
       })
       .catch(console.error);
@@ -88,7 +98,7 @@ const JokenpoHero = () => {
       <h1 className="font-bold uppercase text-center mt-4 text-3xl">
         BTG - Jokenpo
       </h1>
-      <div className="flex h-full mt-4 lg:mt-0 lg:text-2xl  lg:items-center">
+      <div className="flex mt-4 lg:mt-0 lg:text-2xl  lg:items-center">
         <div className=" w-1/2 lg:h-128  flex-col flex items-center justify-center">
           <h2 className="text-center items">Player 1</h2>
           <div className="  w-24 lg:w-48">
@@ -112,16 +122,16 @@ const JokenpoHero = () => {
                 </option>
               ))}
             </select>
-            <label className="text-sm text-center">Movement:</label>
+            <label className="text-sm text-center">Move:</label>
             <select
-              value={playerOneMovement}
+              value={playerOneMove}
               className="mt-2 lg:w-40 w-24 border border-gray-300 rounded px-2 py-1 text-sm"
-              onChange={handlePlayerOneMovement}
+              onChange={handlePlayerOneMove}
             >
               <option value="" disabled>
                 Select Move
               </option>
-              {movements.map((move) => (
+              {Moves.map((move) => (
                 <option key={move.id} value={move.id}>
                   {move.name}
                 </option>
@@ -158,16 +168,16 @@ const JokenpoHero = () => {
                 </option>
               ))}
             </select>
-            <label className="text-sm text-center">Movement:</label>
+            <label className="text-sm text-center">Move:</label>
             <select
-              value={playerTwoMovement}
-              onChange={handlePlayerTwoMovement}
+              value={playerTwoMove}
+              onChange={handlePlayerTwoMove}
               className="mt-2 lg:w-40 w-24 border border-gray-300 rounded px-2 py-1 text-sm"
             >
               <option value="" disabled>
                 Select move
               </option>
-              {movements.map((move) => (
+              {Moves.map((move) => (
                 <option key={move.id} value={move.id}>
                   {move.name}
                 </option>
@@ -176,6 +186,9 @@ const JokenpoHero = () => {
           </div>
         </div>
       </div>
+      <Modal isOpen={open} onClose={() => setOpen(false)}>
+        <h2 className="text-xl w-full text-center text-red-500">{error}</h2>
+      </Modal>
     </main>
   );
 };

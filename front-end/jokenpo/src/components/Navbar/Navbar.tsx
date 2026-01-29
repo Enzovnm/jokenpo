@@ -1,5 +1,6 @@
 import React from "react";
 import btgLogo from "../../assets/btg-logo.png";
+import { Link } from "react-router";
 
 const Navbar = () => {
   return (
@@ -11,6 +12,10 @@ const Navbar = () => {
           className="h-10 w-auto object-contain"
         />
       </div>
+      <ul className="flex gap-2">
+        <Link to={"/"}>Game</Link>
+        <Link to={"moves"}>Moves</Link>
+      </ul>
     </nav>
   );
 };
