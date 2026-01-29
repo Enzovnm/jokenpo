@@ -11,6 +11,18 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
 builder.Services.AddControllers().AddJsonOptions(p => p.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 string postgresConnection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -18,6 +30,9 @@ string postgresConnection = builder.Configuration.GetConnectionString("DefaultCo
 builder.Services.AddDbContext<AppDbContext> (options => options.UseNpgsql(postgresConnection));
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
